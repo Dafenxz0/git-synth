@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>git-synth — Commit History Polyphonic Synthesizer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">///</span>
+          <div>
+            <h1>git-synth</h1>
+            <p class="subtitle">Commit History Polyphonic Synthesizer &amp; Piano-Roll</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <a
+            class="gh-link"
+            href="https://github.com/Dafenxz0/git-synth"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub &amp; Rust CLI
+          </a>
+        </div>
+      </header>
+
+      <section class="source-bar" aria-label="Repository Loader">
+        <form id="repo-form" class="repo-form">
+          <label for="repo-input" class="sr-only">GitHub repository (owner/repo)</label>
+          <input
+            id="repo-input"
+            type="text"
+            value="karpathy/micrograd"
+            placeholder="owner/repo (e.g. karpathy/micrograd)"
+            spellcheck="false"
+            autocomplete="off"
+          />
+          <button type="submit" class="btn btn-primary">Load Repo</button>
+        </form>
+
+        <div class="presets" role="group" aria-label="Offline Demo Presets">
+          <span class="label-cap">Presets:</span>
+          <button type="button" class="btn btn-chip" data-preset="karpathy/micrograd">
+            karpathy/micrograd
+          </button>
+          <button type="button" class="btn btn-chip" data-preset="torvalds/linux">
+            torvalds/linux
+          </button>
+          <button type="button" class="btn btn-chip" data-preset="facebook/react">
+            facebook/react
+          </button>
+          <button type="button" class="btn btn-chip" data-preset="Dafenxz0/git-synth">
+            Dafenxz0/git-synth
+          </button>
+        </div>
+
+        <div id="status-line" class="status-line" role="status">Ready (offline preset loaded)</div>
+      </section>
+
+      <main class="workspace">
+        <section class="stage-panel">
+          <div class="stage-header">
+            <div class="transport">
+              <button type="button" id="play-btn" class="btn btn-play">Play</button>
+              <button type="button" id="stop-btn" class="btn">Stop</button>
+              <span id="playhead-readout" class="mono readout">00 / 00</span>
+            </div>
+
+            <div class="controls-inline">
+              <label class="control">
+                <span>Scale</span>
+                <select id="scale-select">
+                  <option value="pentatonic">Pentatonic</option>
+                  <option value="dorian">Dorian</option>
+                  <option value="lydian">Lydian</option>
+                  <option value="minor">Minor</option>
+                </select>
+              </label>
+
+              <label class="control">
+                <span>BPM <strong id="bpm-val" class="mono">120</strong></span>
+                <input id="bpm-slider" type="range" min="60" max="200" value="120" />
+              </label>
+
+              <label class="control">
+                <span>Gain</span>
+                <input id="volume-slider" type="range" min="0" max="100" value="75" />
+              </label>
+            </div>
+          </div>
+
+          <div class="voice-strip">
+            <span class="label-cap">Voices:</span>
+            <label class="toggle">
+              <input type="checkbox" id="voice-bass" checked />
+              <span class="swatch swatch-bass"></span>
+              Bass Pulse
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="voice-arp" checked />
+              <span class="swatch swatch-arp"></span>
+              Arpeggio
+            </label>
+            <label class="toggle">
+              <input type="checkbox" id="voice-pad" checked />
+              <span class="swatch swatch-pad"></span>
+              Pad Chord
+            </label>
+            <span id="note-readout" class="mono note-readout">--</span>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="visualizer"></canvas>
+          </div>
+
+          <div class="inspector" aria-live="polite">
+            <div class="inspector-main">
+              <span id="insp-sha" class="mono badge">-------</span>
+              <span id="insp-ext" class="mono badge badge-ext">.rs</span>
+              <span id="insp-msg" class="insp-msg">Press Play to synthesize repository history</span>
+            </div>
+            <div class="inspector-meta mono">
+              <span id="insp-author">-</span>
+              <span id="insp-date">-</span>
+              <span id="insp-pan">PAN 0.00</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="queue-panel">
+          <div class="queue-header">
+            <h2>Commit Score</h2>
+            <span id="commit-count" class="mono">0 commits</span>
+          </div>
+          <ul id="commit-list" class="commit-list"></ul>
+        </aside>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
