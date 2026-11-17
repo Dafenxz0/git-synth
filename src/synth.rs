@@ -131,7 +131,8 @@ pub fn render_score(score: &[CommitEvent]) -> Vec<(f32, f32)> {
                 |t| {
                     let phase = TAU * freq * t;
                     let mod_index = 0.45 * (-6.0 * t).exp();
-                    (phase + mod_index * (2.0 * phase).sin()).sin() * 0.8 + 0.2 * (2.0 * phase).sin()
+                    (phase + mod_index * (2.0 * phase).sin()).sin() * 0.8
+                        + 0.2 * (2.0 * phase).sin()
                 },
             );
         }

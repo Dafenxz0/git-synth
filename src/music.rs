@@ -223,7 +223,12 @@ mod tests {
     #[test]
     fn scale_quantization_snaps_to_scale_pitch_classes() {
         let root = 48; // C3
-        for scale in [Scale::Pentatonic, Scale::Dorian, Scale::Lydian, Scale::Minor] {
+        for scale in [
+            Scale::Pentatonic,
+            Scale::Dorian,
+            Scale::Lydian,
+            Scale::Minor,
+        ] {
             let root_pc = root % 12;
             let allowed_pcs: Vec<u8> = scale
                 .intervals()

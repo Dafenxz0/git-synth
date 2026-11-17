@@ -31,7 +31,10 @@ impl CommitRecord {
 
 const COMMIT_MARKER: &str = "@@@COMMIT@@@";
 
-pub fn read_repo_commits(repo_path: &Path, max_commits: usize) -> Result<Vec<CommitRecord>, String> {
+pub fn read_repo_commits(
+    repo_path: &Path,
+    max_commits: usize,
+) -> Result<Vec<CommitRecord>, String> {
     let limit = max_commits.max(1).to_string();
     let output = Command::new("git")
         .arg("-C")

@@ -52,10 +52,7 @@ pub fn format_timeline(
 
         let author = truncate_str(&event.author, 14);
         let ext = truncate_str(&format!(".{}", event.commit.primary_ext), 6);
-        let churn = format!(
-            "+{}/-{}",
-            event.commit.insertions, event.commit.deletions
-        );
+        let churn = format!("+{}/-{}", event.commit.insertions, event.commit.deletions);
 
         let line = format!(
             "{:>3}  {}  {:<6} {:<14}  {:<15}  {}  {}  {}\n",
