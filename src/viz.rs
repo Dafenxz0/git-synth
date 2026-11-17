@@ -50,7 +50,7 @@ pub fn format_timeline(
             .unwrap_or_else(|| "-".to_string());
         let note_col = format!("{bass_name}/{lead_name} ({}p)", event.pad_chord.len());
 
-        let author = truncate_str(&event.author, 14);
+        let author = truncate_str(&event.commit.author, 14);
         let ext = truncate_str(&format!(".{}", event.commit.primary_ext), 6);
         let churn = format!("+{}/-{}", event.commit.insertions, event.commit.deletions);
 
