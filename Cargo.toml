@@ -1,0 +1,8 @@
+[package]
+name = "git-synth"
+version = "0.1.0"
+edition = "2021"
+description = "Turn any Git repository's commit history into generative polyphonic music"
+license = "MIT"
+
+[dependencies]
