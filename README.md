@@ -1,57 +1,91 @@
+<p align="center">
+  <img src="assets/readme/hero.svg" alt="git-synth — project visual identity" width="100%" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/Dafenxz0/git-synth/actions/workflows/ci.yml"><img alt="GitHub Actions CI" src="https://github.com/Dafenxz0/git-synth/actions/workflows/ci.yml/badge.svg" /></a>
+  <a href="https://dafenxz0.github.io/git-synth/"><img alt="Live demo" src="https://img.shields.io/badge/Live_Demo-Open_in_browser-1b3441?style=flat&logo=github" /></a>
+</p>
+
 # git-synth
 
-[![CI](https://github.com/Dafenxz0/git-synth/actions/workflows/ci.yml/badge.svg)](https://github.com/Dafenxz0/git-synth/actions/workflows/ci.yml)
+### Every commit is a note. Every repo has a score.
 
-Turn any Git repository's commit history into generative polyphonic music and a live piano-roll visualizer.
+A pure-Rust command-line synthesizer and browser-based Web Audio player that transform **Git commit history** into polyphonic music. The same idea has two outputs: an actual **16-bit stereo WAV** and an interactive piano-roll visualization.
 
-**Live Web Audio Player:** [https://dafenxz0.github.io/git-synth/](https://dafenxz0.github.io/git-synth/)
+<p align="center"><a href="https://dafenxz0.github.io/git-synth/"><strong>LISTEN IN THE BROWSER</strong></a></p>
 
-## Two Modes
+![Git history to audio processing chain](assets/readme/architecture.svg)
 
-1. **Pure-Rust CLI (`src/`):** Zero external crate dependencies. Reads `git log --numstat` (or a bundled sample log), synthesizes polyphonic bass pulse, arpeggio, and detuned pad voices with ADSR envelopes and stereo panning, writes a standard 16-bit 44.1 kHz stereo `.wav` file, and prints a TrueColor ANSI Goertzel spectrogram timeline in the terminal.
-2. **Interactive Web Audio Player (`web/`):** Load any public GitHub `owner/repo` (or play built-in offline presets for `karpathy/micrograd`, `torvalds/linux`, `facebook/react`, and `Dafenxz0/git-synth`) with live Web Audio synthesis, tempo/scale/voice controls, and a Canvas commit-particle piano-roll + FFT spectrum visualizer.
-
-## How Commit Metrics Map to Music
-
-| Git Metric | Musical Parameter |
-| --- | --- |
-| Commit SHA + primary file extension (`.rs`, `.py`, `.js`, `.c`, `.md`, ...) | Scale degree & melodic arpeggio motif quantized to `Pentatonic`, `Dorian`, `Lydian`, or `Minor` |
-| Insertions + deletions (`--numstat` churn) | Note velocity, rhythmic duration (`1.0` / `1.5` / `2.0` beats), arpeggio density, particle burst size |
-| Multi-extension commits | Adds a 7th interval to the detuned pad chord |
-| Author identity + insertion/deletion balance | Constant-power stereo pan (`L` to `R`) |
-| Chronological commit order | Sequential song timeline (`--reverse`) |
-
-## CLI Usage
+## Start with your own repository
 
 ```bash
-# Synthesize music from the current repository
+git clone https://github.com/Dafenxz0/git-synth.git
+cd git-synth
 cargo run --release -- --repo . --output git-synth.wav
-
-# Choose scale, tempo, and commit limit
-cargo run --release -- --repo /path/to/repo --scale dorian --tempo 128 --max-commits 64 --output repo.wav
-
-# Run using the built-in offline sample git log
-cargo run --release -- --sample --scale lydian --output sample.wav
-
-# Run unit tests
-cargo test --verbose
 ```
 
-### CLI Options
+For a dependency-free demonstration using a bundled sample commit history:
 
-- `-r, --repo <PATH>` — Target git repository path (default: `.`)
-- `-o, --output <FILE.wav>` — Output 16-bit stereo PCM WAV file (default: `git-synth.wav`)
-- `-s, --scale <SCALE>` — Musical scale: `pentatonic`, `dorian`, `lydian`, `minor` (default: `pentatonic`)
-- `-t, --tempo <BPM>` — Tempo in BPM, `40..240` (default: `120`)
-- `-n, --max-commits <N>` — Max commits to read (default: `48`)
-- `--root <MIDI>` — Root MIDI pitch, `24..72` (default: `48` / `C3`)
-- `--sample` — Use the bundled sample commit log
-- `--no-color` — Disable ANSI TrueColor output in the terminal spectrogram
+```bash
+cargo run --release -- --sample --scale lydian --output sample.wav
+```
 
-## Project Structure
+Try another repository and musical setting:
 
-- `src/git_log.rs` — `git log --numstat` execution, parser, extension extractor, and bundled sample log
-- `src/music.rs` — Scale definitions, quantization, MIDI/Hz math, deterministic commit-to-score mapping
-- `src/synth.rs` — ADSR envelope, bass/arpeggio/pad voices, constant-power stereo panner, soft limiter, 16-bit PCM WAV encoder
-- `src/viz.rs` — Terminal Goertzel band-energy ASCII spectrogram & score timeline
-- `web/` — Zero-build Web Audio synthesizer & HTML5 Canvas piano-roll visualizer for GitHub Pages
+```bash
+cargo run --release -- --repo /path/to/repo --scale dorian --tempo 128 --max-commits 64 --output repo.wav
+```
+
+The CLI needs **Git** installed for `--repo` input. The Rust crate itself uses **no external crates**.
+
+## What becomes music?
+
+| Git signal | Musical result |
+| --- | --- |
+| Commit SHA and main file extension | Quantized scale degrees and arpeggio motif |
+| Added + removed lines | Velocity, note duration, rhythmic density |
+| Mixed file extensions | Additional seventh interval in the pad chord |
+| Author and change balance | Stereo positioning |
+| Chronological order | Arrangement over time |
+
+Choose among **Pentatonic**, **Dorian**, **Lydian** and **Minor** scales. The synthesis engine produces bass, arpeggio and detuned pad voices using envelopes, stereo panning and a soft limiter. The terminal additionally displays an ANSI-colored Goertzel spectrum timeline.
+
+## Two ways to listen
+
+**CLI:** render a 44.1 kHz, 16-bit stereo PCM WAV with Rust; choose scale, root, tempo and commit limit.
+
+**[Browser player](https://dafenxz0.github.io/git-synth/):** stream a public GitHub repository into a Web Audio arrangement, or select a built-in offline preset. Explore the Canvas piano roll and FFT spectrum while playback runs.
+
+### CLI options
+
+| Option | Default | Purpose |
+| --- | --- | --- |
+| `-r, --repo <PATH>` | `.` | Git repository path |
+| `-o, --output <FILE>` | `git-synth.wav` | Output WAV path |
+| `-s, --scale <NAME>` | `pentatonic` | `pentatonic`, `dorian`, `lydian`, `minor` |
+| `-t, --tempo <BPM>` | `120` | Tempo, 40–240 BPM |
+| `-n, --max-commits <N>` | `48` | Number of commits to process |
+| `--root <MIDI>` | `48` | Root pitch, MIDI 24–72 |
+| `--sample` | off | Use bundled history |
+| `--no-color` | off | Remove ANSI colors from console output |
+
+## Architecture
+
+| Layer | Files |
+| --- | --- |
+| Git parsing | [`src/git_log.rs`](src/git_log.rs) |
+| Quantization and scoring | [`src/music.rs`](src/music.rs) |
+| Waveforms, envelopes and WAV encoding | [`src/synth.rs`](src/synth.rs) |
+| ANSI spectral display | [`src/viz.rs`](src/viz.rs) |
+| Browser synth and Canvas player | [`web/app.js`](web/app.js) |
+
+## Verify
+
+```bash
+cargo fmt --all -- --check
+cargo clippy --all-targets -- -D warnings
+cargo test
+```
+
+The composition is a **deterministic sonification of repository metadata**, not a transcription of source code or an AI-generated song. Different repos can have similar musical textures because the mapping intentionally reduces a large history to a small set of musical controls.
